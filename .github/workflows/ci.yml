@@ -34,3 +34,7 @@ jobs:
   ci:
     uses: jfilter/civikitchen/.github/workflows/extension-ci.yml@v1
 # END CIVIKITCHEN MANAGED caller
+    # Two owned tables, managed records and an upgrader: the post-uninstall
+    # invariants and the log scan are the only gate that looks at them.
+    with:
+      lifecycle: true
