@@ -41,7 +41,7 @@ final class Value {
    * @param mixed $value
    */
   public static function strOrNull($value): ?string {
-    return ($value === NULL || $value === '') ? NULL : self::str($value);
+    return $value === NULL || $value === '' ? NULL : self::str($value);
   }
 
   /**

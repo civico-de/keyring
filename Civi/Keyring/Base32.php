@@ -16,7 +16,7 @@ final class Base32 {
    * How many characters `encode()` produces for a given number of input bytes.
    */
   public static function encodedLength(int $byteCount): int {
-    return intdiv($byteCount * 8 + 4, 5);
+    return intdiv(($byteCount * 8) + 4, 5);
   }
 
   public static function encode(string $bytes): string {

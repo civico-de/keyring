@@ -34,11 +34,13 @@ final class Revoke extends AbstractBatchAction {
 
       // Read back rather than echo the value written: a first and a repeated
       // revocation must report the timestamp in the same shape.
-      $stored = Value::row(\Civi\Api4\KeyringToken::get(FALSE)
-        ->addSelect('id', 'revoked_at')
-        ->addWhere('id', '=', $id)
-        ->execute()
-        ->first());
+      $stored = Value::row(
+        \Civi\Api4\KeyringToken::get(FALSE)
+          ->addSelect('id', 'revoked_at')
+          ->addWhere('id', '=', $id)
+          ->execute()
+          ->first(),
+      );
       $result[] = [
         'id' => $id,
         'revoked_at' => Value::strOrNull($stored['revoked_at'] ?? NULL),

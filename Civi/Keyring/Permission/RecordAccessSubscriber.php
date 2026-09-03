@@ -39,7 +39,7 @@ final class RecordAccessSubscriber extends AutoSubscriber {
   public static function onSelectWhere(GenericHookEvent $event): void {
     // Hook fields are ['entity', 'clauses', 'userId', 'conditions'].
     [$entity, $clauses, $userId] = $event->getHookValues();
-    $field = is_string($entity) ? (RecordOwnership::columns()[$entity] ?? NULL) : NULL;
+    $field = is_string($entity) ? RecordOwnership::columns()[$entity] ?? NULL : NULL;
     if ($field === NULL || \CRM_Core_Permission::check(Permissions::ADMINISTER)) {
       return;
     }
@@ -65,8 +65,7 @@ final class RecordAccessSubscriber extends AutoSubscriber {
     // The event names the user whose access is being evaluated; that is the
     // principal to judge, not whoever happens to hold the session.
     $userId = $event->getUserID();
-    if (!isset(RecordOwnership::columns()[$entity])
-      || \CRM_Core_Permission::check(Permissions::ADMINISTER, $userId)) {
+    if (!isset(RecordOwnership::columns()[$entity]) || \CRM_Core_Permission::check(Permissions::ADMINISTER, $userId)) {
       return;
     }
 

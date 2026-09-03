@@ -128,7 +128,9 @@
 
       this.copy = function () {
         if (!ctrl.plaintext || !navigator.clipboard) {
-          ctrl.announcement = ts("Copying is not available here; select the token and copy it by hand.");
+          ctrl.announcement = ts(
+            "Copying is not available here; select the token and copy it by hand.",
+          );
           return;
         }
         navigator.clipboard.writeText(ctrl.plaintext).then(
@@ -155,9 +157,12 @@
         // message with .html(), so a label is markup unless it is escaped.
         CRM.confirm({
           title: ts("Revoke token"),
-          message: ts('Revoke the token "%1"? Any client still using it stops working immediately.', {
-            1: _.escape(token.label),
-          }),
+          message: ts(
+            'Revoke the token "%1"? Any client still using it stops working immediately.',
+            {
+              1: _.escape(token.label),
+            },
+          ),
         }).on("crmConfirm:yes", function () {
           crmApi4("KeyringToken", "revoke", { where: [["id", "=", token.id]] }).then(
             function () {
@@ -168,7 +173,8 @@
             },
             function (failure) {
               $timeout(function () {
-                ctrl.error = (failure && failure.error_message) || ts("Could not revoke the token.");
+                ctrl.error =
+                  (failure && failure.error_message) || ts("Could not revoke the token.");
               });
             },
           );

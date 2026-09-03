@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 namespace Civi\Keyring;
 
-use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\KeyringToken;
 use Civi\Api4\Utils\CoreUtil;
+use Civi\API\Exception\UnauthorizedException;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
 use PHPUnit\Framework\TestCase;
@@ -43,7 +43,11 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
   public function testManageOwnCanIssueForItself(): void {
     $this->actAs($this->selfId, [Permissions::MANAGE_OWN, 'access CiviCRM']);
     $created = KeyringToken::create(TRUE)
-      ->setContactId($this->selfId)->setLabel('mine')->setScope([])->execute()->single();
+      ->setContactId($this->selfId)
+      ->setLabel('mine')
+      ->setScope([])
+      ->execute()
+      ->single();
     self::assertSame($this->selfId, $created['contact_id']);
   }
 
@@ -51,13 +55,20 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
     $this->actAs($this->selfId, [Permissions::MANAGE_OWN, 'access CiviCRM']);
     $this->expectException(UnauthorizedException::class);
     KeyringToken::create(TRUE)
-      ->setContactId($this->otherId)->setLabel('theirs')->setScope([])->execute();
+      ->setContactId($this->otherId)
+      ->setLabel('theirs')
+      ->setScope([])
+      ->execute();
   }
 
   public function testAdministerCanIssueForSomebodyElse(): void {
     $this->actAs($this->selfId, [Permissions::ADMINISTER, 'access CiviCRM']);
     $created = KeyringToken::create(TRUE)
-      ->setContactId($this->otherId)->setLabel('theirs')->setScope([])->execute()->single();
+      ->setContactId($this->otherId)
+      ->setLabel('theirs')
+      ->setScope([])
+      ->execute()
+      ->single();
     self::assertSame($this->otherId, $created['contact_id']);
   }
 
@@ -65,7 +76,10 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
     $this->actAs($this->selfId, ['access CiviCRM']);
     $this->expectException(UnauthorizedException::class);
     KeyringToken::create(TRUE)
-      ->setContactId($this->selfId)->setLabel('mine')->setScope([])->execute();
+      ->setContactId($this->selfId)
+      ->setLabel('mine')
+      ->setScope([])
+      ->execute();
   }
 
   public function testManageOwnSeesOnlyItsOwnTokens(): void {
@@ -110,8 +124,7 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
     $this->actAs($this->selfId, [Permissions::MANAGE_OWN, 'access CiviCRM']);
 
     $this->expectException(UnauthorizedException::class);
-    KeyringToken::update(TRUE)->addWhere('id', '=', $mine)
-      ->addValue('contact_id', $this->otherId)->execute();
+    KeyringToken::update(TRUE)->addWhere('id', '=', $mine)->addValue('contact_id', $this->otherId)->execute();
   }
 
   public function testManageOwnCannotUpdateAnotherPersonsTokenByItsId(): void {
@@ -119,8 +132,7 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
     $this->actAs($this->selfId, [Permissions::MANAGE_OWN, 'access CiviCRM']);
 
     $this->expectException(UnauthorizedException::class);
-    KeyringToken::update(TRUE)->addWhere('id', '=', $theirs)
-      ->addValue('label', 'taken over')->execute();
+    KeyringToken::update(TRUE)->addWhere('id', '=', $theirs)->addValue('label', 'taken over')->execute();
   }
 
   public function testManageOwnCannotReassignAnyTokenThroughSave(): void {
@@ -128,8 +140,7 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
     $this->actAs($this->selfId, [Permissions::MANAGE_OWN, 'access CiviCRM']);
 
     $this->expectException(UnauthorizedException::class);
-    KeyringToken::save(TRUE)
-      ->addRecord(['id' => $mine, 'contact_id' => $this->otherId])->execute();
+    KeyringToken::save(TRUE)->addRecord(['id' => $mine, 'contact_id' => $this->otherId])->execute();
   }
 
   public function testManageOwnCannotReplaceTokens(): void {
@@ -137,16 +148,14 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
     $this->actAs($this->selfId, [Permissions::MANAGE_OWN, 'access CiviCRM']);
 
     $this->expectException(UnauthorizedException::class);
-    KeyringToken::replace(TRUE)->addWhere('contact_id', '=', $this->selfId)
-      ->setRecords([])->execute();
+    KeyringToken::replace(TRUE)->addWhere('contact_id', '=', $this->selfId)->setRecords([])->execute();
   }
 
   public function testAdministerMayEditALabel(): void {
     $theirs = $this->mintFor($this->otherId);
     $this->actAs($this->selfId, [Permissions::ADMINISTER, 'access CiviCRM']);
 
-    KeyringToken::update(TRUE)->addWhere('id', '=', $theirs)
-      ->addValue('label', 'renamed')->execute();
+    KeyringToken::update(TRUE)->addWhere('id', '=', $theirs)->addValue('label', 'renamed')->execute();
     self::assertSame('renamed', $this->labelOf($theirs));
   }
 
@@ -155,16 +164,14 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
     $this->actAs($this->selfId, [Permissions::ADMINISTER, 'access CiviCRM']);
 
     $this->expectException(\CRM_Core_Exception::class);
-    KeyringToken::update(TRUE)->addWhere('id', '=', $theirs)
-      ->addValue('contact_id', $this->selfId)->execute();
+    KeyringToken::update(TRUE)->addWhere('id', '=', $theirs)->addValue('contact_id', $this->selfId)->execute();
   }
 
   public function testAnUncheckedWriteCannotMoveATokenEither(): void {
     $mine = $this->mintFor($this->selfId);
 
     $this->expectException(\CRM_Core_Exception::class);
-    KeyringToken::update(FALSE)->addWhere('id', '=', $mine)
-      ->addValue('contact_id', $this->otherId)->execute();
+    KeyringToken::update(FALSE)->addWhere('id', '=', $mine)->addValue('contact_id', $this->otherId)->execute();
   }
 
   public function testNotEvenAdministerCanDeleteAToken(): void {
@@ -225,12 +232,17 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
       ->addValue('contact_type', 'Individual')
       ->addValue('first_name', 'Keyring')
       ->addValue('last_name', $lastName)
-      ->execute()->single()['id'];
+      ->execute()
+      ->single()['id'];
   }
 
   private function mintFor(int $contactId): int {
     return (int) KeyringToken::create(FALSE)
-      ->setContactId($contactId)->setLabel('t')->setScope([])->execute()->single()['id'];
+      ->setContactId($contactId)
+      ->setLabel('t')
+      ->setScope([])
+      ->execute()
+      ->single()['id'];
   }
 
   /**
@@ -243,8 +255,7 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
    */
   private function actAs(int $contactId, array $permissions): void {
     \CRM_Core_Session::singleton()->set('userID', $contactId);
-    \CRM_Core_Config::singleton()->userPermissionClass->permissions
-      = array_merge($permissions, ['view all contacts']);
+    \CRM_Core_Config::singleton()->userPermissionClass->permissions = array_merge($permissions, ['view all contacts']);
   }
 
   private function denialFor(int $tokenId): int {
@@ -252,7 +263,10 @@ final class AccessHeadlessTest extends TestCase implements HeadlessInterface, Tr
     DenialRecorder::record($tokenId, 'view all contacts', 'civicrm/contact/view');
     DenialRecorder::flush();
     return (int) \Civi\Api4\KeyringDenial::get(FALSE)
-      ->addSelect('id')->addWhere('token_id', '=', $tokenId)->execute()->single()['id'];
+      ->addSelect('id')
+      ->addWhere('token_id', '=', $tokenId)
+      ->execute()
+      ->single()['id'];
   }
 
   private function labelOf(int $tokenId): string {

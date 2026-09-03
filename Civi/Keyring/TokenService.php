@@ -46,11 +46,16 @@ final class TokenService {
    * the same letters is not a hit.
    */
   public static function containsToken(string $haystack): bool {
-    $pattern = '/(?<![A-Za-z0-9_])'
+    $pattern =
+      '/(?<![A-Za-z0-9_])'
       . preg_quote(self::PREFIX, '/')
-      . '[' . preg_quote(Base32::ALPHABET, '/') . ']{'
+      . '['
+      . preg_quote(Base32::ALPHABET, '/')
+      . ']{'
       . Base32::encodedLength(self::SECRET_BYTES)
-      . '}(?![' . preg_quote(Base32::ALPHABET, '/') . '])/';
+      . '}(?!['
+      . preg_quote(Base32::ALPHABET, '/')
+      . '])/';
     return preg_match($pattern, $haystack) === 1;
   }
 

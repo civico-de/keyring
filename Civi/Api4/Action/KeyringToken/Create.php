@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 namespace Civi\Api4\Action\KeyringToken;
 
-use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
+use Civi\API\Exception\UnauthorizedException;
 use Civi\Keyring\Expiry;
 use Civi\Keyring\Permissions;
 use Civi\Keyring\ScopeService;
@@ -84,20 +84,22 @@ final class Create extends AbstractAction {
 
     // The generic save, unchecked: `token_hash` is denied to every permissioned
     // caller, so this action is the only way a usable row comes into being.
-    $created = Value::row(\Civi\Api4\KeyringToken::save(FALSE)
-      ->addRecord([
-        'contact_id' => $contactId,
-        'label' => $label,
-        'token_hash' => TokenService::hash($plaintext),
-        'token_prefix' => TokenService::displayPrefix($plaintext),
-        'scope' => $scope,
-        'scope_profile' => $this->scopeProfile,
-        'mode' => $this->mode,
-        'expires_at' => $expiresAt,
-        'created_id' => \CRM_Core_Session::getLoggedInContactID() ?: NULL,
-      ])
-      ->execute()
-      ->single());
+    $created = Value::row(
+      \Civi\Api4\KeyringToken::save(FALSE)
+        ->addRecord([
+          'contact_id' => $contactId,
+          'label' => $label,
+          'token_hash' => TokenService::hash($plaintext),
+          'token_prefix' => TokenService::displayPrefix($plaintext),
+          'scope' => $scope,
+          'scope_profile' => $this->scopeProfile,
+          'mode' => $this->mode,
+          'expires_at' => $expiresAt,
+          'created_id' => \CRM_Core_Session::getLoggedInContactID() ?: NULL,
+        ])
+        ->execute()
+        ->single(),
+    );
 
     $result[] = [
       'id' => Value::int($created['id'] ?? NULL),

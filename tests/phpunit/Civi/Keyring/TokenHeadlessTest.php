@@ -34,7 +34,8 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
       ->addValue('contact_type', 'Individual')
       ->addValue('first_name', 'Keyring')
       ->addValue('last_name', 'Subject')
-      ->execute()->single()['id'];
+      ->execute()
+      ->single()['id'];
   }
 
   protected function tearDown(): void {
@@ -66,14 +67,20 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
   public function testGetNeverExposesTheHash(): void {
     $created = $this->mint(['access CiviCRM']);
     $this->grantEverything();
-    $row = KeyringToken::get(TRUE)->addSelect('*')
-      ->addWhere('id', '=', $created['id'])->execute()->single();
+    $row = KeyringToken::get(TRUE)
+      ->addSelect('*')
+      ->addWhere('id', '=', $created['id'])
+      ->execute()
+      ->single();
     self::assertArrayNotHasKey('token_hash', $row);
 
     // Naming the field explicitly does not get it either: APIv4 drops an
     // always-denied field from the select rather than raising.
-    $explicit = KeyringToken::get(TRUE)->addSelect('id', 'token_hash')
-      ->addWhere('id', '=', $created['id'])->execute()->single();
+    $explicit = KeyringToken::get(TRUE)
+      ->addSelect('id', 'token_hash')
+      ->addWhere('id', '=', $created['id'])
+      ->execute()
+      ->single();
     self::assertSame(['id'], array_keys($explicit));
   }
 
@@ -120,7 +127,8 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
       ->setContactId($this->contactId)
       ->setLabel('from profile')
       ->setScopeProfile('addin')
-      ->execute()->single();
+      ->execute()
+      ->single();
     self::assertSame('addin', $created['scope_profile']);
     self::assertContains('access AJAX API', $created['scope']);
   }
@@ -216,8 +224,11 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
   public function testAnExpiryDateIsStoredAsTheEndOfThatDay(): void {
     $created = $this->mint(['access CiviCRM'], 'enforce', '2030-06-01');
     self::assertSame('2030-06-01 23:59:59', $created['expires_at']);
-    $row = KeyringToken::get(FALSE)->addSelect('expires_at')
-      ->addWhere('id', '=', $created['id'])->execute()->single();
+    $row = KeyringToken::get(FALSE)
+      ->addSelect('expires_at')
+      ->addWhere('id', '=', $created['id'])
+      ->execute()
+      ->single();
     self::assertSame('2030-06-01 23:59:59', $row['expires_at']);
   }
 
@@ -259,26 +270,30 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
 
   public function testStateCarriesATranslatedLabel(): void {
     $created = $this->mint(['access CiviCRM']);
-    $row = KeyringToken::get(FALSE)->addSelect('state:label')
-      ->addWhere('id', '=', $created['id'])->execute()->single();
+    $row = KeyringToken::get(FALSE)
+      ->addSelect('state:label')
+      ->addWhere('id', '=', $created['id'])
+      ->execute()
+      ->single();
     self::assertSame('Active', $row['state:label']);
   }
 
   public function testStateIsNotWritable(): void {
     $created = $this->mint(['access CiviCRM']);
-    $field = KeyringToken::getFields(FALSE)->addWhere('name', '=', 'state')
-      ->execute()->single();
+    $field = KeyringToken::getFields(FALSE)->addWhere('name', '=', 'state')->execute()->single();
     self::assertTrue($field['readonly']);
     self::assertSame('active', $this->stateOf($created['id']));
   }
 
   public function testAnAdministratorsUpdateStoresADateAsTheEndOfTheDay(): void {
     $created = $this->mint(['access CiviCRM']);
-    KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])
-      ->addValue('expires_at', '2030-06-01')->execute();
+    KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])->addValue('expires_at', '2030-06-01')->execute();
 
-    $row = KeyringToken::get(FALSE)->addSelect('expires_at', 'state')
-      ->addWhere('id', '=', $created['id'])->execute()->single();
+    $row = KeyringToken::get(FALSE)
+      ->addSelect('expires_at', 'state')
+      ->addWhere('id', '=', $created['id'])
+      ->execute()
+      ->single();
     self::assertSame('2030-06-01 23:59:59', $row['expires_at']);
     self::assertSame('active', $row['state']);
   }
@@ -286,8 +301,10 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
   public function testAnUpdateWithATimeOfDayIsRefused(): void {
     $created = $this->mint(['access CiviCRM'], 'enforce', '2030-06-01');
     try {
-      KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])
-        ->addValue('expires_at', '2030-07-01 12:00:00')->execute();
+      KeyringToken::update(FALSE)
+        ->addWhere('id', '=', $created['id'])
+        ->addValue('expires_at', '2030-07-01 12:00:00')
+        ->execute();
       self::fail('a datetime expiry should have been refused');
     }
     catch (\CRM_Core_Exception $e) {
@@ -299,8 +316,7 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
   public function testAnUpdateIntoThePastIsRefused(): void {
     $created = $this->mint(['access CiviCRM'], 'enforce', '2030-06-01');
     try {
-      KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])
-        ->addValue('expires_at', '2020-01-01')->execute();
+      KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])->addValue('expires_at', '2020-01-01')->execute();
       self::fail('a past expiry should have been refused');
     }
     catch (\CRM_Core_Exception $e) {
@@ -311,20 +327,24 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
 
   public function testResendingTheStoredExpiryIsNotAChange(): void {
     $created = $this->mint(['access CiviCRM'], 'enforce', '2030-06-01');
-    KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])
+    KeyringToken::update(FALSE)
+      ->addWhere('id', '=', $created['id'])
       ->addValue('expires_at', '2030-06-01 23:59:59')
-      ->addValue('label', 'relabelled')->execute();
+      ->addValue('label', 'relabelled')
+      ->execute();
 
-    $row = KeyringToken::get(FALSE)->addSelect('expires_at', 'label')
-      ->addWhere('id', '=', $created['id'])->execute()->single();
+    $row = KeyringToken::get(FALSE)
+      ->addSelect('expires_at', 'label')
+      ->addWhere('id', '=', $created['id'])
+      ->execute()
+      ->single();
     self::assertSame('2030-06-01 23:59:59', $row['expires_at']);
     self::assertSame('relabelled', $row['label']);
   }
 
   public function testAnExpiryCanBeCleared(): void {
     $created = $this->mint(['access CiviCRM'], 'enforce', '2030-06-01');
-    KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])
-      ->addValue('expires_at', NULL)->execute();
+    KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])->addValue('expires_at', NULL)->execute();
     self::assertNull($this->expiresAt($created['id']));
   }
 
@@ -335,16 +355,21 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
     $prefix = $created['token_prefix'];
 
     try {
-      KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])
-        ->addValue('token_prefix', 'kr_forged')->execute();
+      KeyringToken::update(FALSE)
+        ->addWhere('id', '=', $created['id'])
+        ->addValue('token_prefix', 'kr_forged')
+        ->execute();
       self::fail('rewriting token_prefix should have been refused');
     }
     catch (\CRM_Core_Exception $e) {
       self::assertStringContainsString('token_prefix', $e->getMessage());
     }
 
-    $row = KeyringToken::get(FALSE)->addSelect('token_prefix')
-      ->addWhere('id', '=', $created['id'])->execute()->single();
+    $row = KeyringToken::get(FALSE)
+      ->addSelect('token_prefix')
+      ->addWhere('id', '=', $created['id'])
+      ->execute()
+      ->single();
     self::assertSame($prefix, $row['token_prefix']);
   }
 
@@ -357,8 +382,10 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
 
     $this->expectException(\CRM_Core_Exception::class);
     try {
-      KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])
-        ->addValue('token_hash', TokenService::hash('kr_forged'))->execute();
+      KeyringToken::update(FALSE)
+        ->addWhere('id', '=', $created['id'])
+        ->addValue('token_hash', TokenService::hash('kr_forged'))
+        ->execute();
     }
     finally {
       self::assertSame($before, \CRM_Core_DAO::singleValueQuery(
@@ -370,13 +397,17 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
 
   public function testAnEditThatRepeatsTheStoredValuesIsFine(): void {
     $created = $this->mint(['access CiviCRM']);
-    KeyringToken::update(FALSE)->addWhere('id', '=', $created['id'])
+    KeyringToken::update(FALSE)
+      ->addWhere('id', '=', $created['id'])
       ->addValue('contact_id', $this->contactId)
       ->addValue('token_prefix', $created['token_prefix'])
       ->addValue('label', 'renamed')
       ->execute();
-    $row = KeyringToken::get(FALSE)->addSelect('label')
-      ->addWhere('id', '=', $created['id'])->execute()->single();
+    $row = KeyringToken::get(FALSE)
+      ->addSelect('label')
+      ->addWhere('id', '=', $created['id'])
+      ->execute()
+      ->single();
     self::assertSame('renamed', $row['label']);
   }
 
@@ -537,14 +568,20 @@ final class TokenHeadlessTest extends TestCase implements HeadlessInterface, Tra
   }
 
   private function expiresAt(int $tokenId): ?string {
-    $row = KeyringToken::get(FALSE)->addSelect('expires_at')
-      ->addWhere('id', '=', $tokenId)->execute()->single();
+    $row = KeyringToken::get(FALSE)
+      ->addSelect('expires_at')
+      ->addWhere('id', '=', $tokenId)
+      ->execute()
+      ->single();
     return $row['expires_at'] === NULL ? NULL : (string) $row['expires_at'];
   }
 
   private function stateOf(int $tokenId): string {
-    $row = KeyringToken::get(FALSE)->addSelect('state')
-      ->addWhere('id', '=', $tokenId)->execute()->single();
+    $row = KeyringToken::get(FALSE)
+      ->addSelect('state')
+      ->addWhere('id', '=', $tokenId)
+      ->execute()
+      ->single();
     return (string) $row['state'];
   }
 

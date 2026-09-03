@@ -27,23 +27,27 @@ $role ??= \Civi\Api4\Role::create(FALSE)
   ->addValue('label', 'keyring e2e subject')
   ->addValue('is_active', TRUE)
   ->addValue('permissions', $perms)
-  ->execute()->first();
-\Civi\Api4\Role::update(FALSE)->addWhere('id', '=', $role['id'])
-  ->addValue('permissions', $perms)->execute();
+  ->execute()
+  ->first();
+\Civi\Api4\Role::update(FALSE)->addWhere('id', '=', $role['id'])->addValue('permissions', $perms)->execute();
 
 $contact = \Civi\Api4\Contact::get(FALSE)
-  ->addWhere('external_identifier', '=', 'keyring-e2e-subject')->execute()->first();
+  ->addWhere('external_identifier', '=', 'keyring-e2e-subject')
+  ->execute()
+  ->first();
 if ($contact === NULL) {
   $contact = \Civi\Api4\Contact::create(FALSE)
     ->addValue('contact_type', 'Individual')
     ->addValue('first_name', 'Keyring')
     ->addValue('last_name', 'E2e')
     ->addValue('external_identifier', 'keyring-e2e-subject')
-    ->execute()->first();
+    ->execute()
+    ->first();
   \Civi\Api4\Email::create(FALSE)
     ->addValue('contact_id', $contact['id'])
     ->addValue('email', 'keyring-e2e@example.org')
-    ->addValue('is_primary', TRUE)->execute();
+    ->addValue('is_primary', TRUE)
+    ->execute();
 }
 
 $user = \Civi\Api4\User::get(FALSE)->addWhere('username', '=', 'keyring-e2e')->execute()->first();
@@ -51,8 +55,12 @@ $user ??= \Civi\Api4\User::create(FALSE)
   ->addValue('username', 'keyring-e2e')
   ->addValue('contact_id', $contact['id'])
   ->addValue('uf_name', 'keyring-e2e@example.org')
-  ->execute()->first();
-\Civi\Api4\User::update(FALSE)->addWhere('id', '=', $user['id'])
-  ->addValue('roles', [$role['id']])->addValue('is_active', TRUE)->execute();
+  ->execute()
+  ->first();
+\Civi\Api4\User::update(FALSE)
+  ->addWhere('id', '=', $user['id'])
+  ->addValue('roles', [$role['id']])
+  ->addValue('is_active', TRUE)
+  ->execute();
 
 echo 'contactId=' . $contact['id'] . "\n";

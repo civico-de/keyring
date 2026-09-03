@@ -30,8 +30,7 @@ final class CredentialSourceTest extends TestCase {
    * the bare prefix the parsed bags are judged by.
    */
   private static function mintedToken(): string {
-    return TokenService::PREFIX
-      . str_repeat('a', Base32::encodedLength(TokenService::SECRET_BYTES));
+    return TokenService::PREFIX . str_repeat('a', Base32::encodedLength(TokenService::SECRET_BYTES));
   }
 
   protected function setUp(): void {
@@ -72,7 +71,7 @@ final class CredentialSourceTest extends TestCase {
     $_GET['api_key'] = '  ' . self::TOKEN . '  ';
     self::assertTrue(CredentialSource::isInRequestParams());
 
-    $_GET = ['_authx' => "  Bearer   " . self::TOKEN . " \n"];
+    $_GET = ['_authx' => '  Bearer   ' . self::TOKEN . " \n"];
     self::assertTrue(CredentialSource::isInRequestParams());
   }
 

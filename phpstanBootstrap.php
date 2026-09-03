@@ -49,7 +49,8 @@ foreach ($ckInfo === FALSE ? [] : $ckInfo->requires->ext ?? [] as $ckRequired) {
     fwrite(
       STDERR,
       "phpstanBootstrap: required extension {$ckKey} is under none of "
-        . implode(', ', $ckExtDirs) . "; its classes stay unresolved\n",
+      . implode(', ', $ckExtDirs)
+      . "; its classes stay unresolved\n",
     );
     continue;
   }

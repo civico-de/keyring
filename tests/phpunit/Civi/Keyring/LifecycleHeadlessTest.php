@@ -54,7 +54,8 @@ final class LifecycleHeadlessTest extends TestCase implements HeadlessInterface 
     $form = Afform::get(FALSE)
       ->addSelect('placement', 'permission')
       ->addWhere('name', '=', 'afkeyringContactTokens')
-      ->execute()->single();
+      ->execute()
+      ->single();
     self::assertContains('contact_summary_tab', (array) $form['placement']);
     self::assertContains(Permissions::MANAGE_OWN, (array) $form['permission']);
   }
