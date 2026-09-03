@@ -5,8 +5,8 @@ policy:
   npm_license: UNLICENSED
   copyright: 'civico GmbH'
 
-  # Headless line coverage is 90.9%; the floor leaves room for a DAO stub or a
-  # subscriber registration without a red build.
+  # The headless suite runs comfortably above this; the gap leaves room for a
+  # DAO stub or a subscriber registration without a red build.
   coverage:
     minimum: 85
 
@@ -16,3 +16,14 @@ policy:
     - searchKitTasks
 
   hook_style: listener
+
+  # phpstanBootstrap.php: the required extensions (authx, afform, search_kit)
+  # are bundled under core/ext, which the template's ext-dir-only lookup does
+  # not reach; it also aliases the civix DAO base class.
+  # tests/e2e/lib.sh: the suites live in tests/e2e/measure/ with their own
+  # helpers — token minting and curl-from-stdin, no maildev.
+  template_custom:
+    paths:
+      - phpstanBootstrap.php
+      - tests/e2e/lib.sh
+    reason: Bundled-extension autoloading and an e2e suite in a subdirectory
