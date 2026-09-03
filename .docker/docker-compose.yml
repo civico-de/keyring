@@ -1,0 +1,79 @@
+# keyring dev stack — CiviCRM (civikitchen standalone) + MariaDB + maildev
+# + phpMyAdmin.
+#
+# Usage:
+#   ./fetch-ext.sh                            # once: clone the foreign extensions
+#   cd .docker && docker compose up -d        # first boot: auto-install + provisioning
+#
+# URLs:  CiviCRM http://localhost:8100 (admin/admin)
+#        maildev http://localhost:1180 · phpMyAdmin http://localhost:8101
+#
+# Re-provision from scratch (re-runs init.d hooks): docker compose down -v && up -d
+
+# Explicit project name — unnamed .docker/ stacks all become one project
+# called "docker" and share volumes across checkouts.
+name: keyring
+
+services:
+  app:
+    image: ${CIVIKITCHEN_IMAGE:-ghcr.io/jfilter/civikitchen:v1}
+    pull_policy: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8100:80"
+    environment:
+      CIVICRM_AUTO_INSTALL: "1"
+      CIVICRM_DB_HOST: db
+      CIVICRM_DB_NAME: civicrm
+      CIVICRM_DB_USER: civicrm
+      CIVICRM_DB_PASSWORD: civicrm
+      # Must match the host:port opened in the browser (asset URLs).
+      CIVIKITCHEN_SITE_URL: "http://localhost:8100"
+      CIVIKITCHEN_DEMO_USER: admin
+      CIVIKITCHEN_SMTP_HOST: maildev
+      CIVIKITCHEN_SMTP_PORT: "1025"
+      # authx carries the credential flows keyring hooks into. afform and
+      # search_kit are enabled by core already and are <requires> of keyring.
+      CIVIKITCHEN_ENABLE_EXTENSIONS: "authx,keyring"
+    volumes:
+      - ..:/var/www/html/ext/keyring
+      # outlook365 and its dependencies are deliberately NOT mounted: the
+      # image auto-enables every extension under ext/, and com.cividesk.apikey
+      # aborts the boot (see docs/measurements.md).
+      - ./init.d:/civikitchen-init.d:ro
+
+  db:
+    image: mariadb:10.11
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: civicrm
+      MYSQL_USER: civicrm
+      MYSQL_PASSWORD: civicrm
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  maildev:
+    image: maildev/maildev:2.1.0
+    ports:
+      - "1180:1080"
+      - "1125:1025"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.2
+    depends_on:
+      - db
+    ports:
+      - "8101:80"
+    environment:
+      PMA_HOST: db
+
+volumes:
+  db-data:

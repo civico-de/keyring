@@ -1,0 +1,18 @@
+$schema: https://raw.githubusercontent.com/jfilter/civikitchen/main/packages/civikitchen-scenario-schema/scenario.schema.json
+version: 1
+policy:
+  license: Proprietary
+  npm_license: UNLICENSED
+  copyright: 'civico GmbH'
+
+  # Headless line coverage is 90.9%; the floor leaves room for a DAO stub or a
+  # subscriber registration without a red build.
+  coverage:
+    minimum: 85
+
+  # hook_civicrm_searchKitTasks belongs to search_kit, which lives under
+  # core/ext where the checker does not look for a <requires> extension.
+  known_hooks:
+    - searchKitTasks
+
+  hook_style: listener
