@@ -79,15 +79,26 @@ testing against Standalone's admin is worthless, because
 permission is ever asked. Tokens never reach a command line — curl reads its
 whole configuration, headers included, from stdin.
 
+The list below is the whole of what CI runs; anything left out of it reaches
+the pipeline unrun, which is how a formatting, template and dependency gate
+first went red there. civikitchen ships no wrapper that runs all of them.
+
 ```bash
 cd .docker && docker compose up -d      # down -v && up -d after a schema change
 
-docker compose exec -w /var/www/html/ext/keyring app ckphpunit -c phpunit-unit.xml.dist
-docker compose exec -w /var/www/html/ext/keyring app ckphpunit
-docker compose exec -w /var/www/html/ext/keyring app ckcoverage
-docker compose exec -w /var/www/html/ext/keyring app bash -c 'cklint --all && phpstan analyse && ckconform'
+ck=(docker compose exec -u www-data -w /var/www/html/ext/keyring app)
+"${ck[@]}" ckphpunit -c phpunit-unit.xml.dist
+"${ck[@]}" ckcoverage tests/phpunit
+"${ck[@]}" bash -c 'cklint --all && ckconform && ckcivix --check && ckfmt --check'
+"${ck[@]}" bash -c 'phpstan analyse && ckcompat && ckdeps && cktaint && cksmarty && ckeslint'
+"${ck[@]}" cklifecycle
+
 bash tests/e2e/measure/run.sh
+/path/to/civikitchen/scaffold/ckinit.php --check .
 ```
+
+`ckfmt` without `--check` writes the fixes; the linters have to run again
+after it, because formatting moves code. `--check` is what CI runs.
 
 `ckconform` reports ten residual warnings, none of them findings: two say the
 release-tag checks were skipped because there is no git tag yet, and eight are

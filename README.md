@@ -70,18 +70,27 @@ bearing. Re-check the escaping by hand when touching `ang/keyringTokens/`.
 
 ## Development
 
+civikitchen has no single "run everything" command, so the list below is the
+whole of what CI runs — keep it that way, or a gate reaches the pipeline
+unrun.
+
 ```bash
 cd .docker && docker compose up -d      # CiviCRM on http://localhost:8100 (admin/admin)
 
 # inside the app container, from /var/www/html/ext/keyring:
 ckphpunit -c phpunit-unit.xml.dist      # pure unit suite, no database
-ckphpunit                               # headless suite
-ckcoverage                              # headless suite with the coverage floor
-cklint --all && phpstan analyse && ckconform
+ckcoverage tests/phpunit                # headless suite against the coverage floor
+cklint --all && ckconform && ckcivix --check && ckfmt --check
+phpstan analyse && ckcompat && ckdeps && cktaint && cksmarty && ckeslint
+cklifecycle                             # install/disable/enable/uninstall
 
 # from the host:
-bash tests/e2e/measure/run.sh           # end-to-end against the dev stack
+bash tests/e2e/measure/run.sh                       # end-to-end against the dev stack
+/path/to/civikitchen/scaffold/ckinit.php --check .  # template drift
 ```
+
+`ckfmt` without `--check` writes the formatting the gate asks for; re-run the
+linters afterwards, because it moves code.
 
 maildev is on http://localhost:1180, phpMyAdmin on http://localhost:8101. The
 compose project is named `keyring`; `docker compose down -v && up -d` re-runs
