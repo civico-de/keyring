@@ -1,0 +1,47 @@
+/* Badge colours are set as a self-contained foreground/background pair rather
+   than inherited, so the 4.5:1 ratio holds in every CiviCRM theme. */
+.keyring-state {
+  display: inline-block;
+  padding: 0.1em 0.6em;
+  border-radius: 0.8em;
+  font-weight: 600;
+}
+
+.keyring-state-active {
+  color: #17532a;
+  background-color: #e7f5ec;
+  border: 1px solid #17532a;
+}
+
+.keyring-state-expired {
+  color: #6b4700;
+  background-color: #fff4e0;
+  border: 1px solid #6b4700;
+}
+
+.keyring-state-revoked {
+  color: #7a1c1c;
+  background-color: #fdecea;
+  border: 1px solid #7a1c1c;
+}
+
+.keyring-plaintext {
+  color: #10233b;
+  background-color: #eef4fb;
+  border: 2px solid #10233b;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.keyring-plaintext code {
+  color: #10233b;
+  background-color: #ffffff;
+  word-break: break-all;
+}
+
+.keyring-error {
+  color: #7a1c1c;
+  background-color: #fdecea;
+  border: 1px solid #7a1c1c;
+  padding: 0.5rem;
+}

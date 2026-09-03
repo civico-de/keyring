@@ -1,0 +1,11 @@
+<div class="af-markup">
+  <div class="help">
+    {{:: ts('Every token on the site. A token is issued and revoked on the contact\'s own "API tokens" tab; select rows here to revoke in bulk.') }}
+  </div>
+</div>
+<div af-fieldset="">
+  <div class="af-container af-layout-inline">
+    <af-field name="mode" defn="{input_type: 'Select', label: 'Mode'}" />
+  </div>
+  <crm-search-display-table search-name="KeyringTokens" display-name="KeyringTokens_Table"></crm-search-display-table>
+</div>

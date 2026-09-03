@@ -1,0 +1,114 @@
+<div class="keyring-tokens">
+
+  <!-- Single live region for every outcome: creation, copying, revocation. -->
+  <div role="status" aria-live="polite" class="crm-clear">{{ $ctrl.announcement }}</div>
+
+  <div ng-if="$ctrl.error" class="keyring-error" role="alert">{{ $ctrl.error }}</div>
+
+  <div ng-if="$ctrl.plaintext" class="keyring-plaintext" tabindex="-1" role="group"
+       aria-labelledby="keyring-plaintext-heading">
+    <h4 id="keyring-plaintext-heading">{{:: ts('Your new token') }}</h4>
+    <p>{{:: ts('This is the only time the token is shown. Only its hash is stored.') }}</p>
+    <p><code>{{ $ctrl.plaintext }}</code></p>
+    <button type="button" class="btn btn-primary" ng-click="$ctrl.copy()">
+      <i class="crm-i fa-clipboard" aria-hidden="true"></i> {{:: ts('Copy token') }}
+    </button>
+    <button type="button" class="btn btn-secondary" ng-click="$ctrl.dismiss()">
+      {{:: ts('Hide token') }}
+    </button>
+  </div>
+
+  <p>
+    <button type="button" class="btn btn-primary" ng-click="$ctrl.toggleForm()"
+            aria-expanded="{{ $ctrl.showForm }}" aria-controls="keyring-issue-form">
+      <i class="crm-i fa-plus" aria-hidden="true"></i> {{:: ts('Issue a token') }}
+    </button>
+  </p>
+
+  <form id="keyring-issue-form" ng-if="$ctrl.showForm" ng-submit="$ctrl.issue()" novalidate>
+    <div class="form-group">
+      <label for="keyring-label">{{:: ts('Label') }}</label>
+      <input id="keyring-label" class="form-control" type="text" required
+             ng-model="$ctrl.form.label" />
+    </div>
+    <div class="form-group">
+      <label for="keyring-profile">{{:: ts('Scope profile') }}</label>
+      <select id="keyring-profile" class="form-control" required ng-model="$ctrl.form.scopeProfile"
+              ng-options="name as name for name in $ctrl.profiles"
+              aria-describedby="keyring-profile-help">
+        <option value="">{{:: ts('- select -') }}</option>
+      </select>
+      <p id="keyring-profile-help" class="description">
+        {{:: ts('Profiles are configured under Administer - keyring settings. Derive a new one by issuing a token in report mode and reading what it was denied.') }}
+      </p>
+    </div>
+    <div class="form-group">
+      <label for="keyring-mode">{{:: ts('Mode') }}</label>
+      <select id="keyring-mode" class="form-control" ng-model="$ctrl.form.mode">
+        <option value="report">{{:: ts('Report only - deny nothing, record what the scope would refuse') }}</option>
+        <option value="enforce">{{:: ts('Enforce - refuse anything outside the scope') }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="keyring-expires">{{:: ts('Expires (optional)') }}</label>
+      <input id="keyring-expires" class="form-control" type="date" ng-model="$ctrl.form.expiresAt"
+             aria-describedby="keyring-expires-help" />
+      <p id="keyring-expires-help" class="description">
+        {{:: ts('The last day the token works; it stays valid to the end of that day.') }}
+      </p>
+    </div>
+    <button type="submit" class="btn btn-primary"
+            ng-disabled="!$ctrl.form.label || !$ctrl.form.scopeProfile">
+      {{:: ts('Create token') }}
+    </button>
+    <button type="button" class="btn btn-secondary" ng-click="$ctrl.toggleForm()">
+      {{:: ts('Cancel') }}
+    </button>
+  </form>
+
+  <p ng-if="$ctrl.loading">{{:: ts('Loading...') }}</p>
+  <p ng-if="!$ctrl.loading && !$ctrl.tokens.length">{{:: ts('This contact has no keyring tokens.') }}</p>
+
+  <table class="crm-table" ng-if="$ctrl.tokens.length">
+    <caption class="sr-only">{{:: ts('Keyring tokens for this contact') }}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{{:: ts('Label') }}</th>
+        <th scope="col">{{:: ts('Prefix') }}</th>
+        <th scope="col">{{:: ts('Scope') }}</th>
+        <th scope="col">{{:: ts('Mode') }}</th>
+        <th scope="col">{{:: ts('Expires') }}</th>
+        <th scope="col">{{:: ts('Last used') }}</th>
+        <th scope="col">{{:: ts('State') }}</th>
+        <th scope="col">{{:: ts('Actions') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="token in $ctrl.tokens">
+        <td>{{ token.label }}</td>
+        <td><code>{{ token.token_prefix }}</code></td>
+        <td>{{ $ctrl.scopeSummary(token) }}</td>
+        <td>{{ token['mode:label'] }}</td>
+        <td>{{ $ctrl.expiryDate(token) || ts('never') }}</td>
+        <td>{{ token.last_used_at || ts('never') }}</td>
+        <td>
+          <span class="keyring-state keyring-state-{{ $ctrl.state(token) }}">
+            <i class="crm-i"
+               ng-class="{'fa-check': $ctrl.state(token) === 'active',
+                          'fa-hourglass-end': $ctrl.state(token) === 'expired',
+                          'fa-ban': $ctrl.state(token) === 'revoked'}"
+               aria-hidden="true"></i>
+            {{ $ctrl.stateLabel(token) }}
+          </span>
+        </td>
+        <td>
+          <button type="button" class="btn btn-secondary" ng-if="!token.revoked_at"
+                  ng-click="$ctrl.revoke(token)"
+                  aria-label="{{ ts('Revoke token %1', {1: token.label}) }}">
+            <i class="crm-i fa-ban" aria-hidden="true"></i> {{:: ts('Revoke') }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<menu>
+  <!-- The last path segment is the settings-page filter CRM_Admin_Form_Generic
+       reads; it must match the `settings_pages` key in settings/keyring.setting.php. -->
+  <item>
+    <path>civicrm/admin/setting/keyring</path>
+    <page_callback>CRM_Admin_Form_Generic</page_callback>
+    <title>keyring settings</title>
+    <access_arguments>administer keyring tokens</access_arguments>
+    <adminGroup>System Settings</adminGroup>
+    <weight>140</weight>
+  </item>
+</menu>
