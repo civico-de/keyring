@@ -1,0 +1,37 @@
+{
+    "name": "civico-de/keyring",
+    "description": "CiviCRM extension: scoped, revocable API tokens per contact.",
+    "type": "civicrm-ext",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Johannes Filter",
+            "email": "hi@jfilter.de"
+        }
+    ],
+    "require": {
+        "php": ">=8.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Civi\\Keyring\\": "Civi/Keyring/"
+        },
+        "psr-0": {
+            "CRM_": "."
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Civi\\Keyring\\": "tests/phpunit/Civi/Keyring/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.3.0"
+        },
+        "sort-packages": true
+    }
+}

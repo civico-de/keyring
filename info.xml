@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<extension key="keyring" type="module">
+  <file>keyring</file>
+  <name>keyring</name>
+  <description>Scoped, revocable API tokens per contact: several tokens with a permission allowlist, expiry and last-use tracking, while every write stays attributed to the contact itself.</description>
+  <license>Proprietary</license>
+  <authors>
+    <author>
+      <name>Johannes Filter</name>
+      <email>hi@jfilter.de</email>
+      <role>Maintainer</role>
+    </author>
+  </authors>
+  <urls>
+    <url desc="Main Extension Page">https://github.com/civico-de/keyring</url>
+    <url desc="Documentation">https://github.com/civico-de/keyring</url>
+    <url desc="Support">https://github.com/civico-de/keyring/issues</url>
+  </urls>
+  <releaseDate>2026-09-02</releaseDate>
+  <version>0.1.0-alpha</version>
+  <develStage>alpha</develStage>
+  <!-- The `min` attribute is what newer tooling reads; the <ver> child is what
+       CRM_Extension_Info::parse() reads. Both, or the floor is lost. -->
+  <compatibility min="6.12" mode="semver">
+    <ver>6.12</ver>
+  </compatibility>
+  <requires>
+    <ext>authx</ext>
+    <ext>org.civicrm.afform</ext>
+    <ext>org.civicrm.search_kit</ext>
+  </requires>
+  <php_compatibility mode="list">
+    <ver>8.3</ver>
+    <ver>8.4</ver>
+  </php_compatibility>
+  <classloader>
+    <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
+  <upgrader>CiviMix\Schema\Keyring\AutomaticUpgrader</upgrader>
+  <civix>
+    <namespace>CRM/Keyring</namespace>
+    <format>25.10.2</format>
+  </civix>
+  <mixins>
+    <mixin>ang-php@1.0.0</mixin>
+    <mixin>entity-types-php@2.0.0</mixin>
+    <mixin>menu-xml@1.0.0</mixin>
+    <mixin>mgd-php@2.0.0</mixin>
+    <mixin>scan-classes@1.0.0</mixin>
+    <mixin>setting-php@1.0.0</mixin>
+  </mixins>
+</extension>
