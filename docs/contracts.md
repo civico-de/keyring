@@ -5,8 +5,8 @@ expiry and a last-use timestamp. A token is recognised by its `kr_` prefix in a
 `civi.authx.checkCredential` subscriber; the scope is enforced in
 `hook_civicrm_permission_check`. The person's role is never modified.
 
-`docs/plan.md` is the architecture and closes with the deviations phase 2 had to
-make; `docs/measurements.md` is the evidence it rests on; `docs/operations.md`
+`docs/plan.md` is the architecture and closes with the deviations the
+implementation had to make; `docs/measurements.md` is the evidence it rests on; `docs/operations.md`
 is how the thing is run. Keep all three in step with the code.
 
 ## Contracts to preserve
@@ -52,7 +52,7 @@ is how the thing is run. Keep all three in step with the code.
 - **The issuance fields are immutable.** `contact_id`, `token_hash`,
   `token_prefix`, `created_id`, `created_date` are locked in
   `hook_civicrm_pre` (`TokenWriteSubscriber`). Their `readonly` schema flag is metadata only — APIv4
-  write actions ignore it (measured on 6.17.3).
+  write actions ignore it (measured; version in `docs/measurements.md`).
 - **Denials are aggregated**, keyed `(token_id, permission, request_path)` with
   a `hit_count`, flushed once per request. Per-check rows are unusable at 690
   checks per page view.
@@ -72,16 +72,15 @@ is how the thing is run. Keep all three in step with the code.
 ## Tests
 
 The e2e suites in `tests/e2e/measure/` are the regression suite; the directory
-keeps its name because the phase-1 evidence in `docs/measurements.md` cites it.
+keeps its name because the evidence in `docs/measurements.md` cites it.
 The subject is a seeded **non-superuser** (`tests/e2e/measure/seed.php`):
 testing against Standalone's admin is worthless, because
 `all CiviCRM permissions and ACLs` short-circuits every check before the real
 permission is ever asked. Tokens never reach a command line — curl reads its
 whole configuration, headers included, from stdin.
 
-The list below is the whole of what CI runs; anything left out of it reaches
-the pipeline unrun, which is how a formatting, template and dependency gate
-first went red there. civikitchen ships no wrapper that runs all of them.
+The list below is the whole of what CI runs; civikitchen ships no wrapper
+that runs all of them, so anything left out locally reaches the pipeline unrun.
 
 ```bash
 cd .docker && docker compose up -d      # down -v && up -d after a schema change
@@ -100,9 +99,8 @@ bash tests/e2e/measure/run.sh
 `ckfmt` without `--check` writes the fixes; the linters have to run again
 after it, because formatting moves code. `--check` is what CI runs.
 
-`ckconform` reports ten residual warnings, none of them findings: two say the
-release-tag checks were skipped because there is no git tag yet, and eight are
-scanner artefacts — `KeyringDenial` has a column literally named `permission`, which its
+`ckconform`'s residual warnings are scanner artefacts, not findings:
+`KeyringDenial` has a column literally named `permission`, which its
 permission-closure check reads as a permission specification, and `*always deny*`
 is a core sentinel missing from its list of core permissions.
 
