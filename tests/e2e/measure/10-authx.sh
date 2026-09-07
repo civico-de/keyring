@@ -28,7 +28,7 @@ read -r TOKEN_ID TOKEN < <(mint_token "$CONTACT_ID" enforce "" \
   'access CiviCRM' 'access AJAX API' 'view all contacts')
 export TOKEN
 
-# The shape the add-in sends after the fork: the token in X-Civi-Auth.
+# The shape the add-in sends: the token in X-Civi-Auth.
 code="$(hit xheader "$BASE_URL/civicrm/ajax/api4/Contact/get?$V4" "$(auth_header)" "$(site_key_header)")"
 check "xheader (X-Civi-Auth: Bearer) authenticates" \
   "$([ "$code" = "200" ] && echo 0 || echo 1)" "http=$code $(head -c 160 "$OUT_DIR/xheader.body")"
