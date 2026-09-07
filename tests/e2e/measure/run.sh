@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 #
 # Runs every keyring e2e suite against the .docker dev stack and leaves the raw
-# evidence in tests/e2e/measure/out/. The directory keeps its phase-1 name
-# because docs/measurements.md cites it.
+# evidence in tests/e2e/measure/out/, the directory docs/measurements.md cites.
 #
 # Usage:  bash tests/e2e/measure/run.sh
 set -uo pipefail

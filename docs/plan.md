@@ -1,4 +1,4 @@
-# keyring — architecture, phase 2 onwards
+# keyring — architecture
 
 Every decision below names the measurement it rests on. Read
 [`measurements.md`](measurements.md) first; this document does not repeat the
@@ -377,10 +377,8 @@ expired-token failure, plus the attribution assertions from
 | docs | 4 | — |
 | **Total** | **~41** | **~2 070** |
 
-The instrumentation in `Civi/Keyring/Measure/` (3 files, ~200 LOC), the
-measurement page and its menu entry are removed in the same commit that lands
-the real subscribers; `tests/e2e/measure/` is kept and repointed at the
-product code.
+The measurement instrumentation and its page are not part of the extension;
+`tests/e2e/measure/` keeps its name and runs against the product code.
 
 ## Decisions
 
@@ -393,8 +391,8 @@ product code.
    parameter may carry a `kr_` credential. Proving a header exists says nothing
    about what the URL still holds, and a token that also rode in the query
    string has already been logged whatever the header says. Consequence: the
-   Outlook add-in is forked (own repo, name and GitHub creation on Johannes'
-   go) and changed to send the token in `X-Civi-Auth` instead of `api_key=`.
+   Outlook add-in is forked and sends the token in `X-Civi-Auth` instead of
+   `api_key=`.
    The add-in fork also drops the `com.cividesk.apikey` dependency, which does
    not run on current CiviCRM. The e2e suite's add-in-shaped curl therefore
    sends the header, and one negative test proves the URL form is refused.
@@ -407,8 +405,8 @@ product code.
 
 ## Deviations, with the evidence that forced them
 
-Phase 2 implemented everything above. Five points changed; each was measured in
-the running stack, not reasoned about.
+The implementation departs from the plan above in five points; each was measured
+in the running stack, not reasoned about.
 
 1. **The flow is not on the event.** Decision 1 said to read `$e->flow` in the
    `civi.authx.checkCredential` subscriber. `CheckCredentialEvent` (read from

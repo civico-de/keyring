@@ -1,4 +1,4 @@
-# Measurements — phase 1
+# Measurements
 
 Every statement here was produced by running the suites in
 `tests/e2e/measure/` against the `.docker` stack, not by reading source. Raw
@@ -38,7 +38,7 @@ Yes, for every flow, and the raw credential arrives verbatim.
 
 Probes registered at `1000, 0, -199, -201, -301, -401` were observed running in
 that order (`out/q1-listeners.txt`). **A keyring listener must sit above -300**
-(core's api_key resolver). keyring will use `-250`: above core's api_key and
+(core's api_key resolver). keyring uses `-250`: above core's api_key and
 JWT listeners, below core's Basic-auth listener, which serves username/password
 and must keep precedence.
 
