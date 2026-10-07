@@ -41,3 +41,4 @@ jobs:
     # invariants and the log scan are the only gate that looks at them.
     with:
       lifecycle: true
+      extra_phpunit_config: phpunit-unit.xml.dist
