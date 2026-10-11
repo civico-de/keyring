@@ -2,9 +2,7 @@
 
 declare(strict_types = 1);
 
-// phpcs:disable PSR1.Files.SideEffects
 require_once 'keyring.civix.php';
-// phpcs:enable
 
 /**
  * Implements hook_civicrm_config().
