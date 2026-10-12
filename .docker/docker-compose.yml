@@ -8,7 +8,7 @@
 # URLs:  CiviCRM http://localhost:8100 (admin/admin)
 #        maildev http://localhost:1180 · phpMyAdmin http://localhost:8101
 #
-# Re-provision from scratch (re-runs init.d hooks): docker compose down -v && up -d
+# Re-provision from scratch (re-seeds the profile, re-runs init.d hooks): docker compose down -v && up -d
 
 # Explicit project name — unnamed .docker/ stacks all become one project
 # called "docker" and share volumes across checkouts.
@@ -32,6 +32,10 @@ services:
       # Must match the host:port opened in the browser (asset URLs).
       CIVIKITCHEN_SITE_URL: "http://localhost:8100"
       CIVIKITCHEN_DEMO_USER: admin
+      # Dependencies, config, seed records and API users: profiles/dev/profile.json.
+      CIVIKITCHEN_PROFILE: dev
+      CIVIKITCHEN_PROFILE_PATH: /civikitchen-profiles
+      CIVIKITCHEN_TRUST_EXTERNAL_PROFILES: "1"
       CIVIKITCHEN_SMTP_HOST: maildev
       CIVIKITCHEN_SMTP_PORT: "1025"
       # authx carries the credential flows keyring hooks into. afform and
@@ -39,6 +43,7 @@ services:
       CIVIKITCHEN_ENABLE_EXTENSIONS: "authx,keyring"
     volumes:
       - ..:/var/www/html/ext/keyring
+      - ./profiles:/civikitchen-profiles:ro
       # outlook365 and its dependencies are deliberately NOT mounted: the
       # image auto-enables every extension under ext/, and com.cividesk.apikey
       # aborts the boot (see docs/measurements.md).
