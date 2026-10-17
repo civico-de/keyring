@@ -41,7 +41,7 @@ appsh() { # appsh <shell code> — run in the app container
 }
 
 sql() { # sql <query> — PII-free queries only: ids, counts, metadata
-  (cd "$COMPOSE_DIR" && docker compose exec -T db mysql -N -B -ucivicrm -pcivicrm civicrm -e "$1" 2>/dev/null)
+  (cd "$COMPOSE_DIR" && docker compose exec -T db mariadb -N -B -ucivicrm -pcivicrm civicrm -e "$1" 2>/dev/null)
 }
 
 site_key() {
