@@ -16,11 +16,3 @@ policy:
     - searchKitTasks
 
   hook_style: listener
-
-  # phpstanBootstrap.php: the required extensions (authx, afform, search_kit)
-  # are bundled under core/ext, which the template's ext-dir-only lookup does
-  # not reach; it also aliases the civix DAO base class.
-  template_custom:
-    paths:
-      - phpstanBootstrap.php
-    reason: Bundled-extension autoloading
