@@ -5,7 +5,7 @@
 #
 # Usage: bash tests/e2e/measure/10-authx.sh
 set -uo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 CONTACT_ID="${CONTACT_ID:-$(seed_subject)}"
 KEY="$(site_key)"
@@ -16,7 +16,7 @@ echo "keyring e2e — authentication"
 echo
 
 echo "Listener priorities on civi.authx.checkCredential:"
-cvx ev '
+cv ev '
 $d = \Civi::dispatcher();
 foreach ($d->getListeners("civi.authx.checkCredential") as $l) {
   printf("  %6d\n", $d->getListenerPriority("civi.authx.checkCredential", $l));

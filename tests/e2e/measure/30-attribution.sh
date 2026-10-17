@@ -6,7 +6,7 @@
 #
 # Usage: bash tests/e2e/measure/30-attribution.sh
 set -uo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 CONTACT_ID="${CONTACT_ID:-$(seed_subject)}"
 KEY="$(site_key)"
@@ -15,8 +15,8 @@ TAG="keyring-attr-$RANDOM"
 echo "keyring e2e — attribution"
 echo
 note "subject contact id: $CONTACT_ID"
-note "logging setting: $(cvx ev 'echo Civi::settings()->get("logging") ? "on" : "off";')"
-note "user id of subject: $(cvx ev "echo (int) CRM_Core_BAO_UFMatch::getUFId($CONTACT_ID);")"
+note "logging setting: $(cv ev 'echo Civi::settings()->get("logging") ? "on" : "off";')"
+note "user id of subject: $(cv ev "echo (int) CRM_Core_BAO_UFMatch::getUFId($CONTACT_ID);")"
 
 read -r TOKEN_ID TOKEN < <(mint_token "$CONTACT_ID" enforce "" \
   'access CiviCRM' 'access AJAX API' 'view all contacts' 'edit all contacts' \

@@ -6,7 +6,7 @@
 #
 # Usage: bash tests/e2e/measure/20-permissions.sh
 set -uo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 CONTACT_ID="${CONTACT_ID:-$(seed_subject)}"
 KEY="$(site_key)"
