@@ -20,7 +20,7 @@ note "user id of subject: $(cv ev "echo (int) CRM_Core_BAO_UFMatch::getUFId($CON
 
 read -r TOKEN_ID TOKEN < <(mint_token "$CONTACT_ID" enforce "" \
   'access CiviCRM' 'access AJAX API' 'view all contacts' 'edit all contacts' \
-  'view all activities' 'edit all activities' 'add contacts' 'access all custom data')
+  'view all activities' 'add contacts' 'access all custom data')
 export TOKEN
 
 # Writes must be POST: core refuses a database-modifying GET outright.

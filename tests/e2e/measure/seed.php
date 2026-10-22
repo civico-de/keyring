@@ -15,7 +15,6 @@ $perms = [
   'edit all contacts',
   'access all custom data',
   'view all activities',
-  'edit all activities',
   'delete activities',
   'add contacts',
   'administer keyring tokens',

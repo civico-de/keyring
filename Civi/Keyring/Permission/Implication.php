@@ -7,8 +7,8 @@ namespace Civi\Keyring\Permission;
 /**
  * Whether a contact holds a permission through one that implies it.
  *
- * Asked of the CMS the way CRM_Core_Permission::check() does, so no
- * permission_check hook fires again.
+ * Asked of the CMS directly, so no permission_check hook fires again: a
+ * listener that denied the implied permission itself is not consulted here.
  */
 final class Implication {
 
