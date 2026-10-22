@@ -61,7 +61,7 @@ check "'authenticate with api key' is implicitly in scope (no site key needed)" 
 # ── a superuser's token ──────────────────────────────────────────────────
 # Standalone's admin holds every permission only through 'all CiviCRM permissions
 # and ACLs', which is never in scope: the token still carries its scope, no more.
-ADMIN_ID="$(cvx ev 'echo \Civi\Api4\User::get(FALSE)->addWhere("username", "=", "admin")->addSelect("contact_id")->execute()->single()["contact_id"];')"
+ADMIN_ID="$(cv ev 'echo \Civi\Api4\User::get(FALSE)->addWhere("username", "=", "admin")->addSelect("contact_id")->execute()->single()["contact_id"];')"
 read -r ADMIN_WIDE_ID TOKEN < <(mint_token "$ADMIN_ID" enforce "" 'access CiviCRM' 'access AJAX API' 'view all contacts')
 export TOKEN
 code="$(hit admin_v4 "$BASE_URL/civicrm/ajax/api4/Contact/get?$V4" "$(auth_header)")"
