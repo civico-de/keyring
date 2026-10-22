@@ -13,8 +13,9 @@ use Civi\Keyring\TokenContext;
  * Narrows a token-authenticated request to the token's scope.
  *
  * PHP_INT_MIN: every other listener has spoken, so this sees the verdict
- * CRM_Core_Permission::check() is about to return and has the last word. It
- * only ever takes permissions away.
+ * CRM_Core_Permission::check() is about to return and has the last word. A
+ * token grants what is in its scope AND what the contact holds, directly or
+ * through a permission that implies it; it never grants beyond the contact.
  */
 final class ScopeSubscriber extends AutoSubscriber {
 
@@ -29,13 +30,21 @@ final class ScopeSubscriber extends AutoSubscriber {
     if (!TokenContext::isActive()) {
       return;
     }
-    // The hook's third field is a contactId, deliberately ignored: the scope
-    // belongs to the request, so every check it covers is narrowed.
-    [$permission, $granted] = $event->getHookValues();
-    if ($granted !== TRUE || !is_string($permission)) {
+    // Hook fields are ['permission', 'granted', 'contactId']; the scope belongs to
+    // the request, so every check it covers is narrowed whatever contact it names.
+    [$permission, $granted, $contactId] = $event->getHookValues();
+    if (!is_string($permission)) {
       return;
     }
     if (TokenContext::allows($permission)) {
+      // Core asks the implying permissions next ('all CiviCRM permissions and
+      // ACLs' last), and those are out of scope: answer for them here.
+      if ($granted !== TRUE && Implication::heldBy($permission, $contactId)) {
+        $event->__set('granted', TRUE);
+      }
+      return;
+    }
+    if ($granted !== TRUE) {
       return;
     }
 
@@ -47,8 +56,7 @@ final class ScopeSubscriber extends AutoSubscriber {
       return;
     }
 
-    // Hook fields are ['permission', 'granted', 'contactId']; the magic setter
-    // writes back into the by-reference $granted.
+    // The magic setter writes back into the by-reference $granted.
     $event->__set('granted', FALSE);
   }
 

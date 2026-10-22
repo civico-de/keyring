@@ -24,9 +24,12 @@ is how the thing is run. Keep all three in step with the code.
   `CRM_Core_Permission::check` *before* login, and `authx_guards` is
   `["site_key","perm"]` (OR'd). Denying it breaks authentication itself on any
   site not sending the site key.
-- **`all CiviCRM permissions and ACLs` is never in scope.**
-  `CRM_Core_Permission::check` tests it first and short-circuits, so leaving it
-  in makes the whole scope a no-op.
+- **`all CiviCRM permissions and ACLs` is never in scope.** It implies every
+  permission, so leaving it in makes the whole scope a no-op.
+- **A token grants scope ∩ what the contact holds, implications included.**
+  Core asks a permission, then the meta-permissions implying it, then the
+  super-permission; the listener answers for those at the in-scope permission
+  (asking the CMS, no hook), else a superuser's token can do nothing.
 - **`PreEvent::__set()` is a silent no-op.** It overrides `getHookValues()` and
   never fills `hookValues`, so a `hook_civicrm_pre` listener that has to change
   a value writes through the live `$event->params` reference instead.
@@ -74,9 +77,9 @@ is how the thing is run. Keep all three in step with the code.
 The e2e suites in `tests/e2e/measure/` are the regression suite; the directory
 keeps its name because the evidence in `docs/measurements.md` cites it.
 The subject is a seeded **non-superuser** (`tests/e2e/measure/seed.php`):
-testing against Standalone's admin is worthless, because
-`all CiviCRM permissions and ACLs` short-circuits every check before the real
-permission is ever asked. Tokens never reach a command line — curl reads its
+Standalone's admin holds every permission only through
+`all CiviCRM permissions and ACLs`, so a check against admin is decided by that
+one permission. `20-permissions.sh` covers a superuser's token separately. Tokens never reach a command line — curl reads its
 whole configuration, headers included, from stdin.
 
 The list below is the whole of what CI runs; civikitchen ships no wrapper

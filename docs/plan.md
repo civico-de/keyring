@@ -150,9 +150,15 @@ nothing else; the token row is loaded once, during authentication.
   make every token unusable on any site not sending the site key. keyring adds
   it to every scope implicitly, and the UI does not offer it.
 - `all CiviCRM permissions and ACLs` — the inverse: it is **never** grantable
-  through a token, and is stripped from any scope on save. `CRM_Core_Permission::check`
-  tests it first and short-circuits, so leaving it in would make the scope a
-  no-op for a superuser.
+  through a token, and is stripped from any scope on save. It implies every
+  permission, so leaving it in would make the scope a no-op for a superuser.
+
+A token grants a permission when the scope names it **and** the contact holds
+it, directly or through a permission that implies it. `CRM_Core_Permission::check`
+asks the implying permissions after the permission itself, and those are out of
+scope, so the listener answers for them at the in-scope permission. It asks the
+CMS directly, which fires no hook. A superuser's token therefore carries its
+scope instead of nothing.
 
 ### What stays outside the hook — accepted and documented
 
@@ -335,7 +341,9 @@ Accessibility requirements, checked before merge:
 - lookup: unknown hash, revoked token, expired token — each rejects, and each
   rejects *identically* from the outside
 - scope: in-scope grant, out-of-scope deny, `authenticate with api key` always
-  in scope, `all CiviCRM permissions and ACLs` stripped on save
+  in scope, `all CiviCRM permissions and ACLs` stripped on save; a superuser's or
+  a meta-permission holder's token gets its scope and no more, and the scope
+  never grants what the contact lacks
 - report mode: nothing denied, denial rows aggregated by
   `(token, permission, path)` with `hit_count`
 - `last_used_at` throttle: a second touch inside the hour leaves the stored

@@ -58,6 +58,28 @@ code="$(hit no_site_key "$BASE_URL/civicrm/ajax/api4/Contact/get?$V4" "$(auth_he
 check "'authenticate with api key' is implicitly in scope (no site key needed)" \
   "$([ "$code" = "200" ] && echo 0 || echo 1)" "http=$code $(head -c 160 "$OUT_DIR/no_site_key.body")"
 
+# ── a superuser's token ──────────────────────────────────────────────────
+# Standalone's admin holds every permission only through 'all CiviCRM permissions
+# and ACLs', which is never in scope: the token still carries its scope, no more.
+ADMIN_ID="$(cvx ev 'echo \Civi\Api4\User::get(FALSE)->addWhere("username", "=", "admin")->addSelect("contact_id")->execute()->single()["contact_id"];')"
+read -r ADMIN_WIDE_ID TOKEN < <(mint_token "$ADMIN_ID" enforce "" 'access CiviCRM' 'access AJAX API' 'view all contacts')
+export TOKEN
+code="$(hit admin_v4 "$BASE_URL/civicrm/ajax/api4/Contact/get?$V4" "$(auth_header)")"
+check "a superuser's token authenticates without the site key and reads within its scope" \
+  "$([ "$code" = "200" ] && grep -q '"count":1' "$OUT_DIR/admin_v4.body" && echo 0 || echo 1)" \
+  "http=$code $(head -c 160 "$OUT_DIR/admin_v4.body")"
+
+read -r ADMIN_NARROW_ID TOKEN < <(mint_token "$ADMIN_ID" enforce "" 'access CiviCRM' 'access AJAX API')
+export TOKEN
+SUBJECT="keyring-admin-probe-$RANDOM"
+code="$(hit admin_create "$BASE_URL/civicrm/ajax/api4/Activity/create" "$(auth_header)" \
+  'request = "POST"' \
+  "data-urlencode = \"params={\\\"values\\\":{\\\"activity_type_id\\\":1,\\\"subject\\\":\\\"$SUBJECT\\\",\\\"source_contact_id\\\":$ADMIN_ID}}\"")"
+check "a superuser's token is still refused outside its scope" \
+  "$([ "$code" = "403" ] && echo 0 || echo 1)" "http=$code $(head -c 200 "$OUT_DIR/admin_create.body")"
+check "and nothing was written" \
+  "$([ "$(sql "SELECT COUNT(*) FROM civicrm_activity WHERE subject = '$SUBJECT'")" = "0" ] && echo 0 || echo 1)"
+
 # ── report mode ──────────────────────────────────────────────────────────
 read -r REPORT_ID TOKEN < <(mint_token "$CONTACT_ID" report "" 'access CiviCRM' 'access AJAX API')
 export TOKEN

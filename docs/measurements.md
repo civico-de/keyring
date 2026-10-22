@@ -18,10 +18,13 @@ evidence stays in `tests/e2e/measure/out/` (gitignored; regenerate with
 | Measurement subject | a non-superuser contact + Standalone user + role, seeded by `tests/e2e/measure/seed.php` |
 
 The subject deliberately is **not** the demo admin: Standalone's admin role
-holds `all CiviCRM permissions and ACLs`, which `CRM_Core_Permission::check()`
-tests first and short-circuits on. Measured against admin, the hook only ever
-sees that one wildcard permission and never the permission actually asked for
-— the measurement would have been meaningless.
+holds only `all CiviCRM permissions and ACLs`. `CRM_Core_Permission::check()`
+asks the permission itself, then every meta-permission that implies it, then
+that super-permission last, and stops at the first grant. Against admin, the
+permission itself is always refused and the decision falls to the
+super-permission, so the measurement would show the wildcard and nothing else.
+How a superuser's token behaves is the separate
+[superuser section](#a-superusers-token).
 
 ## Q1 — Does an api_key request reach `civi.authx.checkCredential` first?
 
@@ -220,6 +223,24 @@ Two facts worth carrying into the design:
   rewrite would not.
 - Writes must be `POST`. A database-modifying `GET` is refused by core with
   `SECURITY: All requests that modify the database must be http POST, not GET`.
+
+## A superuser's token
+
+Measured with `tests/e2e/measure/20-permissions.sh`, CiviCRM 6.17 Standalone.
+A token for the admin contact with scope `access CiviCRM`, `access AJAX API` and
+`view all contacts` failed authentication without the site key:
+`Login not permitted. Must satisfy guard (site_key, perm)`. The guard asks
+`authenticate with api key`; admin holds it only through
+`all CiviCRM permissions and ACLs`. Core asks that super-permission as its own
+step, and it is out of scope, so the hook took it away. Every other check went
+the same way, so a superuser's token could do nothing at all.
+
+The listener now answers at the in-scope permission. When core refuses it, the
+listener asks the CMS whether the contact holds one of the permissions that
+imply it and grants it if so. The implying permissions stay out of scope. After
+the change the same token reads within its scope without the site key, and an
+`Activity.create` outside the scope is still refused with 403 and writes
+nothing.
 
 ## Blocked: outlook365 cannot be installed on 6.17
 
