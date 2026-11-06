@@ -20,7 +20,7 @@
 
 - Internal maintenance; no change for sites.
 
-## [0.1.0-alpha] - 2026-09-13
+## [0.1.0-alpha] - 2026-09-07
 
 ### Added
 
