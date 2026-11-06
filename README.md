@@ -36,19 +36,22 @@ rows. That is why report mode exists, and why no scope profile is guessed.
 
 ## Documentation
 
+The user manual is at <https://civico-de.github.io/keyring/>; its source is in
+`handbook/`.
+
 | Document | What it covers |
 | --- | --- |
 | [docs/operations.md](docs/operations.md) | Issuing a token, deriving a scope profile from report mode, revoking, what the client must send |
 | [docs/plan.md](docs/plan.md) | Architecture: schema, APIv4 surface, scope enforcement, report mode, contact tab, tests |
 | [docs/measurements.md](docs/measurements.md) | What was measured on CiviCRM 6.17.3 Standalone: authx listener priorities and flows, how far `hook_civicrm_permission_check` reaches, attribution of token-authenticated writes |
-| [docs/contracts.md](docs/contracts.md) | Working notes and the contracts to preserve |
+| [docs/contracts.md](docs/contracts.md) | The contracts every change must preserve |
 
 ## Permissions
 
 | Permission | Grants |
 | --- | --- |
 | `manage own keyring tokens` | Issue, read and revoke tokens for oneself |
-| `administer keyring tokens` | The same for anybody, plus the admin lists, the denial trail, and editing or deleting a stored token |
+| `administer keyring tokens` | The same for anybody, plus the admin lists, the denial trail, and editing a stored token |
 
 `manage own keyring tokens` covers `create`, `get` and `revoke` and nothing
 else: the generic APIv4 `update` and `save` need `administer keyring tokens`,
@@ -102,4 +105,8 @@ deliberately **not** mounted into the stack. See `docs/measurements.md`.
 
 ## License
 
-Proprietary. Copyright (C) 2026 civico GmbH. See `LICENSE.txt`.
+Licensed under AGPL-3.0-or-later, see [LICENSE.txt](LICENSE.txt). Copyright (C)
+2026 civico GmbH. Report bugs in the
+[issue tracker](https://github.com/civico-de/keyring/issues). Report security
+issues by email to security@civico.de, not in a public issue; see
+[SECURITY.md](SECURITY.md).

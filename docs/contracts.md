@@ -1,4 +1,4 @@
-# keyring — working notes
+# keyring — contracts to preserve
 
 Several revocable API tokens per contact, each with a permission allowlist, an
 expiry and a last-use timestamp. A token is recognised by its `kr_` prefix in a

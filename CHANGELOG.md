@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+- A user manual in English and German, shown by the handbook extension and published at
+  https://civico-de.github.io/keyring/.
+
+### Changed
+
+- Licensed under AGPL-3.0-or-later instead of as proprietary software.
+
 ## [0.1.0-alpha.2] - 2026-10-22
 
 ### Changed
