@@ -17,8 +17,8 @@
     <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
     <url desc="Support">https://github.com/civico-de/keyring/issues</url>
   </urls>
-  <releaseDate>2026-10-22</releaseDate>
-  <version>0.1.0-alpha.2</version>
+  <releaseDate>2026-11-07</releaseDate>
+  <version>0.1.0-alpha.3</version>
   <develStage>alpha</develStage>
   <!-- The `min` attribute is what newer tooling reads; the <ver> child is what
        CRM_Extension_Info::parse() reads. Both, or the floor is lost. -->
