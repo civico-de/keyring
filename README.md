@@ -73,24 +73,21 @@ bearing. Re-check the escaping by hand when touching `ang/keyringTokens/`.
 
 ## Development
 
-civikitchen has no single "run everything" command, so the list below is the
-whole of what CI runs — keep it that way, or a gate reaches the pipeline
-unrun.
+`ck ci` runs every in-container gate of the shared CI workflow, in the same
+order and with the same arguments. The lifecycle check, the template drift check
+and the end-to-end suite run outside it:
 
 ```bash
 cd .docker && docker compose up -d      # CiviCRM on http://localhost:8100 (admin/admin)
 
-# inside the app container, from /var/www/html/ext/keyring:
-ckphpunit -c phpunit-unit.xml.dist      # pure unit suite, no database
-ckcoverage tests/phpunit                # headless suite against the coverage floor
-cklint --all && ckconform && ckcivix --check && ckfmt --check
-phpstan analyse && ckcompat && ckdeps && cktaint && cksmarty && ckeslint
-cklifecycle                             # install/disable/enable/uninstall
-
-# from the host:
-bash tests/e2e/measure/run.sh                       # end-to-end against the dev stack
-/path/to/civikitchen/scaffold/ckinit.php --check .  # template drift
+ckx=/path/to/civikitchen/scaffold/ckx
+$ckx ck ci --extra-phpunit-config phpunit-unit.xml.dist   # what CI runs in the container
+$ckx cklifecycle                                          # install/disable/enable/uninstall
+/path/to/civikitchen/scaffold/ckinit.php --check .        # template drift
+bash tests/e2e/measure/run.sh                             # end-to-end, local only
 ```
+
+The end-to-end suite runs against the dev stack and is not part of CI.
 
 `ckfmt` without `--check` writes the formatting the gate asks for; re-run the
 linters afterwards, because it moves code.

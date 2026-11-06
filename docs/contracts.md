@@ -82,21 +82,18 @@ Standalone's admin holds every permission only through
 one permission. `20-permissions.sh` covers a superuser's token separately. Tokens never reach a command line — curl reads its
 whole configuration, headers included, from stdin.
 
-The list below is the whole of what CI runs; civikitchen ships no wrapper
-that runs all of them, so anything left out locally reaches the pipeline unrun.
+`ck ci` runs every in-container gate CI runs; the lifecycle check and the
+template drift check run beside it in CI. The e2e suite is not part of CI and
+runs only against the dev stack.
 
 ```bash
 cd .docker && docker compose up -d      # down -v && up -d after a schema change
 
-ck=(docker compose exec -u www-data -w /var/www/html/ext/keyring app)
-"${ck[@]}" ckphpunit -c phpunit-unit.xml.dist
-"${ck[@]}" ckcoverage tests/phpunit
-"${ck[@]}" bash -c 'cklint --all && ckconform && ckcivix --check && ckfmt --check'
-"${ck[@]}" bash -c 'phpstan analyse && ckcompat && ckdeps && cktaint && cksmarty && ckeslint'
-"${ck[@]}" cklifecycle
-
-bash tests/e2e/measure/run.sh
+ckx=/path/to/civikitchen/scaffold/ckx
+$ckx ck ci --extra-phpunit-config phpunit-unit.xml.dist
+$ckx cklifecycle
 /path/to/civikitchen/scaffold/ckinit.php --check .
+bash tests/e2e/measure/run.sh
 ```
 
 `ckfmt` without `--check` writes the fixes; the linters have to run again
