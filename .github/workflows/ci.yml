@@ -39,7 +39,10 @@ jobs:
 # END CIVIKITCHEN MANAGED caller
     # Two owned tables, managed records and an upgrader: the post-uninstall
     # invariants and the log scan are the only gate that looks at them.
+    #
+    # Public repo: GitHub-hosted runners only, since fork PRs would run on a self-hosted one.
     with:
+      runs_on: ubuntu-latest
       lifecycle: true
       extra_phpunit_config: phpunit-unit.xml.dist
       e2e: tests/e2e/measure/run.sh

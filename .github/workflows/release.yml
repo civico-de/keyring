@@ -25,3 +25,6 @@ jobs:
       contents: write        # a called workflow can only narrow this
     uses: civico-de/civikitchen/.github/workflows/extension-release.yml@v1
 # END CIVIKITCHEN MANAGED caller
+    # Public repo: GitHub-hosted runners only, since fork PRs would run on a self-hosted one.
+    with:
+      runs_on: ubuntu-latest
