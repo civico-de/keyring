@@ -42,3 +42,4 @@ jobs:
     with:
       lifecycle: true
       extra_phpunit_config: phpunit-unit.xml.dist
+      e2e: tests/e2e/measure/run.sh
