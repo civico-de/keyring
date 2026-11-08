@@ -19,7 +19,7 @@ A scope profile is a named list of permissions. Profiles are defined under **Adm
 ```json
 {
   "empty": [],
-  "addin": ["access CiviCRM", "access AJAX API", "view all contacts"]
+  "addin": ["access CiviCRM", "access AJAX API", "view all contacts", "edit all contacts", "add contacts", "view all activities"]
 }
 ```
 

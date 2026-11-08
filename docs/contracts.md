@@ -5,9 +5,9 @@ expiry and a last-use timestamp. A token is recognised by its `kr_` prefix in a
 `civi.authx.checkCredential` subscriber; the scope is enforced in
 `hook_civicrm_permission_check`. The person's role is never modified.
 
-`docs/plan.md` is the architecture and closes with the deviations the
-implementation had to make; `docs/measurements.md` is the evidence it rests on; `docs/operations.md`
-is how the thing is run. Keep all three in step with the code.
+`docs/architecture.md` is the architecture and closes with its implementation notes;
+`docs/measurements.md` is the evidence it rests on; `docs/operations.md` is how the thing is
+run. Keep all three in step with the code.
 
 ## Contracts to preserve
 
@@ -104,8 +104,9 @@ after it, because formatting moves code. `--check` is what CI runs.
 permission-closure check reads as a permission specification, and `*always deny*`
 is a core sentinel missing from its list of core permissions.
 
-`outlook365` cannot be installed on current core (its dependency
-`com.cividesk.apikey` was last released for CiviCRM 5.0 and dies on Smarty 5).
-The civikitchen image auto-enables everything mounted under `ext/`, so mounting
-it alone breaks the boot. `.docker/fetch-ext.sh` clones it to
-`~/.cache/keyring-ext/`, outside the tree, for reading only.
+Upstream `outlook365` cannot be installed on current core (its dependency
+`com.cividesk.apikey` was last released for CiviCRM 5.0 and dies on Smarty 5);
+the fork outlook365-plus drops that dependency. The civikitchen image
+auto-enables everything mounted under `ext/`, so mounting upstream alone breaks
+the boot. `.docker/fetch-ext.sh` clones it to `~/.cache/keyring-ext/`, outside
+the tree, for reading only.

@@ -42,7 +42,7 @@ The user manual is at <https://civico-de.github.io/keyring/>; its source is in
 | Document | What it covers |
 | --- | --- |
 | [docs/operations.md](docs/operations.md) | Issuing a token, deriving a scope profile from report mode, revoking, what the client must send |
-| [docs/plan.md](docs/plan.md) | Architecture: schema, APIv4 surface, scope enforcement, report mode, contact tab, tests |
+| [docs/architecture.md](docs/architecture.md) | Architecture: schema, APIv4 surface, scope enforcement, report mode, contact tab, tests |
 | [docs/measurements.md](docs/measurements.md) | What was measured on CiviCRM 6.17.3 Standalone: authx listener priorities and flows, how far `hook_civicrm_permission_check` reaches, attribution of token-authenticated writes |
 | [docs/contracts.md](docs/contracts.md) | The contracts every change must preserve |
 

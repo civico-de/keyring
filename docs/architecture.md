@@ -13,9 +13,9 @@ APIv4 `source_contact_id`, APIv4 `Note.contact_id` and `log_user_id` are all
 the subject's contact id when a `civi.authx.checkCredential` subscriber
 supplies the principal.
 
-First deployment: a client running the Outlook 365 add-in with seven personal
-API keys. keyring replaces those seven keys with seven scoped tokens; a forked
-add-in sends the token in the `X-Civi-Auth` header (see Decisions).
+The reference client is the Outlook 365 add-in: each user gets a scoped token
+in place of a personal API key, and the add-in's fork sends it in the
+`X-Civi-Auth` header (see Decisions).
 
 ## Schema
 
@@ -370,24 +370,6 @@ in-scope success, out-of-scope zero rows, revoked-token failure and
 expired-token failure, plus the attribution assertions from
 `30-attribution.sh` (`source_contact_id`, `log_user_id`) kept verbatim.
 
-## Minimum size
-
-| Area | Files | LOC (est.) |
-| --- | --- | --- |
-| schema + DAOs | 4 | 240 (mostly generated) |
-| `Civi\Keyring\*` services (TokenService, TokenContext, ScopeService, DenialRecorder) | 4 | 320 |
-| subscribers (authx, permission) | 2 | 120 |
-| APIv4 entities + actions | 5 | 200 |
-| settings + managed (profiles, nav, SearchKit, Afform) | 6 | 260 |
-| contact tab (Afform + tab registration) | 3 | 140 |
-| `keyring.php`, `info.xml`, upgrader | 3 | 90 |
-| tests (unit + headless + e2e) | 10 | 700 |
-| docs | 4 | — |
-| **Total** | **~41** | **~2 070** |
-
-The measurement instrumentation and its page are not part of the extension;
-`tests/e2e/measure/` keeps its name and runs against the product code.
-
 ## Decisions
 
 1. **No token in the URL.** keyring tokens are accepted only on the header
@@ -411,13 +393,12 @@ The measurement instrumentation and its page are not part of the extension;
 3. **Who may issue tokens:** both. `manage own keyring tokens` for the person
    themselves, `administer keyring tokens` for administrators.
 
-## Deviations, with the evidence that forced them
+## Implementation notes
 
-The implementation departs from the plan above in five points; each was measured
-in the running stack, not reasoned about.
+Five points where the obvious approach does not work, each measured in the
+running stack.
 
-1. **The flow is not on the event.** Decision 1 said to read `$e->flow` in the
-   `civi.authx.checkCredential` subscriber. `CheckCredentialEvent` (read from
+1. **The flow is not on the event.** `CheckCredentialEvent` (read from
    `core/ext/authx/Civi/Authx/CheckCredentialEvent.php` on 6.17.3) carries
    `credFormat`, `credValue`, `requestPath`, `principal` and `rejection` — and
    no flow. The flow lives on `AuthenticatorTarget`, which only the later
@@ -437,7 +418,7 @@ in the running stack, not reasoned about.
    code is written by this extension.
 
 3. **The contact tab is a custom Angular component, not a SearchKit display.**
-   The plan's accessibility requirement is a per-row `<button>` whose accessible
+   The accessibility requirement is a per-row `<button>` whose accessible
    name contains the token label. SearchKit tables offer row actions only
    through the bulk task menu — search_kit's display modules contain no per-row
    task link — so that button cannot exist in a stock display. `ang/keyringTokens`

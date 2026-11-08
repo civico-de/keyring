@@ -69,7 +69,7 @@ answers. Derive it instead:
    ```json
    {
      "empty": [],
-     "addin": ["access CiviCRM", "access AJAX API", "view all contacts"]
+     "addin": ["access CiviCRM", "access AJAX API", "view all contacts", "edit all contacts", "add contacts", "view all activities"]
    }
    ```
 

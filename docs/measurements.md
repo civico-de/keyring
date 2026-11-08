@@ -12,7 +12,7 @@ evidence stays in `tests/e2e/measure/out/` (gitignored; regenerate with
 | CiviCRM | 6.17.3 (`cv ev 'echo CRM_Utils_System::version();'`) |
 | CMS | Standalone (`standaloneusers`) |
 | PHP | 8.4.25 |
-| Image | `ghcr.io/jfilter/civikitchen:v1` |
+| Image | `ghcr.io/civico-de/civikitchen:v1` |
 | Compose project | `keyring`, app on `http://localhost:8100` |
 | Extensions enabled | `authx`, `keyring` |
 | Measurement subject | a non-superuser contact + Standalone user + role, seeded by `tests/e2e/measure/seed.php` |
@@ -261,6 +261,6 @@ reading and are not mounted. Q2's
 `civicrm/keyring/measure`, which is shaped exactly like outlook365's
 `access outlook 365 pages` route (`xml/Menu/outlook365.xml:14`).
 
-This matters for the first deployment: the add-in's server side needs a
-maintained API-key extension, or the client's route stays plain
-`civicrm/ajax/rest` against core entities.
+This mattered for the add-in's server side. Resolved since: the fork
+[outlook365-plus](https://github.com/civico-de/outlook365-plus) drops
+`com.cividesk.apikey` and requires keyring instead.
