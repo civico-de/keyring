@@ -16,3 +16,7 @@ policy:
     - searchKitTasks
 
   hook_style: listener
+
+  untagged_versions:
+    - version: "0.1.0-alpha"
+      reason: scaffold version, never released; the first release is 0.1.0-alpha.1
