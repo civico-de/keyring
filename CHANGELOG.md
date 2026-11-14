@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.1.0-alpha.4] - 2026-11-14
+
 ### Changed
 
 - Requires CiviCRM 6.16 or newer.
@@ -49,7 +51,8 @@
   tokens` and `administer keyring tokens`.
 - A contact tab for issuing and revoking tokens, admin searches, and scope profile settings.
 
-[Unreleased]: https://github.com/civico-de/keyring/compare/v0.1.0-alpha.3...HEAD
+[Unreleased]: https://github.com/civico-de/keyring/compare/v0.1.0-alpha.4...HEAD
+[0.1.0-alpha.4]: https://github.com/civico-de/keyring/compare/v0.1.0-alpha.3...v0.1.0-alpha.4
 [0.1.0-alpha.3]: https://github.com/civico-de/keyring/compare/v0.1.0-alpha.2...v0.1.0-alpha.3
 [0.1.0-alpha.2]: https://github.com/civico-de/keyring/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
 [0.1.0-alpha.1]: https://github.com/civico-de/keyring/compare/v0.1.0-alpha...v0.1.0-alpha.1
