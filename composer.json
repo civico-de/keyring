@@ -1,6 +1,5 @@
 {
     "name": "civico-de/keyring",
-    "description": "CiviCRM extension: scoped, revocable API tokens per contact.",
     "type": "civicrm-ext",
     "license": "AGPL-3.0-or-later",
     "authors": [
