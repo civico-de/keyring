@@ -22,8 +22,8 @@
   <develStage>alpha</develStage>
   <!-- The `min` attribute is what newer tooling reads; the <ver> child is what
        CRM_Extension_Info::parse() reads. Both, or the floor is lost. -->
-  <compatibility min="6.12" mode="semver">
-    <ver>6.12</ver>
+  <compatibility min="6.16" mode="semver">
+    <ver>6.16</ver>
   </compatibility>
   <requires>
     <ext>authx</ext>
