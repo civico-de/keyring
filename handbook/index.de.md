@@ -8,6 +8,8 @@ routes:
 
 ![keyring: Tokens für ein Add-in, ein Skript oder eine Integration rufen die API als ihr Kontakt auf](images/cover.png)
 
+> **Status: Alpha.** Einstellungen, APIs und gespeicherte Daten können sich zwischen Releases noch ändern. Probieren Sie die Extension auf einer Testsite aus, bevor Sie sie produktiv einsetzen.
+
 keyring gibt einem Kontakt mehrere API-Tokens statt des einen API-Schlüssels, den CiviCRM vorsieht. Jedes Token hat eine eigene Liste von Berechtigungen, ein optionales Ablaufdatum und einen Vermerk, wann es zuletzt benutzt wurde, und jedes lässt sich einzeln widerrufen. Ein Token meldet sich als sein Kontakt an, alles damit Erledigte wird also dieser Person zugeschrieben. Es gibt kein zusätzliches Benutzerkonto und keinen Schattenkontakt.
 
 keyring ist für Programme gedacht, die im Auftrag einer Person mit CiviCRM sprechen, etwa ein Mail-Add-in auf einem Laptop. Das Programm bekommt nur die Berechtigungen, die es braucht, und ein verlorenes Gerät kostet ein Token, nicht den ganzen Zugang der Person.

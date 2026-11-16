@@ -2,6 +2,8 @@
 
 # keyring
 
+> **Status: alpha.** Settings, APIs and stored data can still change between releases. Try it on a test site before you use it in production.
+
 Scoped, revocable API tokens per contact for CiviCRM Standalone.
 
 CiviCRM gives a contact exactly one `api_key`, and it carries the full scope of
