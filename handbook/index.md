@@ -6,6 +6,8 @@ routes:
 
 # keyring
 
+![keyring: tokens for an add-in, a script or an integration call the API as their contact](images/cover.png)
+
 keyring gives a contact several API tokens instead of the one API key CiviCRM provides. Each token has its own permission list, an optional expiry date and a record of when it was last used, and each can be revoked on its own. A token logs in as its contact, so everything done with it is attributed to that person. There is no extra user account and no shadow contact.
 
 Use it for clients that talk to CiviCRM on a person's behalf, such as a mail add-in on a laptop. The client gets only the permissions it needs, and a lost device costs one token, not the person's whole access.

@@ -1,3 +1,5 @@
+![keyring: tokens for an add-in, a script or an integration call the API as their contact](handbook/images/cover.png)
+
 # keyring
 
 Scoped, revocable API tokens per contact for CiviCRM Standalone.
