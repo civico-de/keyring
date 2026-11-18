@@ -1,4 +1,4 @@
-![keyring: tokens for an add-in, a script or an integration call the API as their contact](handbook/images/cover.png)
+![keyring: tokens for an add-in, a script or an integration call the API as their contact](docs/handbook/images/cover.png)
 
 # keyring
 
@@ -41,7 +41,7 @@ rows. That is why report mode exists, and why no scope profile is guessed.
 ## Documentation
 
 The user manual is at <https://civico-de.github.io/keyring/>; its source is in
-`handbook/`.
+`docs/handbook/`.
 
 | Document | What it covers |
 | --- | --- |
